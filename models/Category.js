@@ -45,5 +45,5 @@ Category = mongoose.model('Category', CategorySchema)
 Item = mongoose.model('Item', ItemSchema)
 
 module.exports = {
-    Category,Item
+    Category, Item, CategorySchema
 }
