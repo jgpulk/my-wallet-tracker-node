@@ -10,6 +10,7 @@ var db = require('./services/db');
 
 // Routing diretories
 var indexRouter = require('./routes/index');
+var userRouter = require('./routes/user');
 var adminRouter = require('./routes/admin/admin');
 
 var app = express();
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
 app.use('/', indexRouter);
+app.use('/user', userRouter);
 app.use('/mwt/admin', adminRouter);
 
 // catch 404 and forward to error handler
