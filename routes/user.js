@@ -50,7 +50,7 @@ router.post('/register', validator.registerationValidator(), validator.validateA
     }
 })
 
-router.post('/email/login', async (req,res) => {
+router.post('/email/login', validator.loginEmailValidator(), validator.validateApp ,async (req,res) => {
     try {
         let user = await User.findOne({ email: req.body.email}, '_id password')
         if(user){
@@ -73,7 +73,7 @@ router.post('/email/login', async (req,res) => {
     }
 })
 
-router.post('/phone/login', async (req,res) => {
+router.post('/phone/login', validator.loginPhoneValidator(), validator.validateApp, async (req,res) => {
     try {
         let user = await User.findOne({ phone: req.body.phone}, '_id password')
         if(user){

@@ -46,6 +46,35 @@ const registerationValidator = () => {
     ]
 }
 
+const loginEmailValidator = () => {
+    return [
+        body('email')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Enter your email').bail()
+            .isEmail().withMessage('Enter valid email').bail(),
+        body('password')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Enter your password').bail()
+    ]
+}
+
+const loginPhoneValidator = () => {
+    return [
+        body('phone')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Enter your phone').bail()
+            .isNumeric().withMessage('Phone number only contains digits').bail()
+            .isLength({ min: 10, max: 10 }).withMessage('Phone number must contains 10 digits').bail(),
+        body('password')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Enter your password').bail()
+    ]
+}
+
 const validateApp = (req, res, next) => {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
@@ -57,5 +86,7 @@ const validateApp = (req, res, next) => {
 
 module.exports = {
     registerationValidator,
+    loginEmailValidator,
+    loginPhoneValidator,
     validateApp
 }
