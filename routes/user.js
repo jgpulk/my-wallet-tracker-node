@@ -6,6 +6,7 @@ var router = express.Router();
 const User = require('../models/User')
 const { Category }= require('../models/Category')
 const validator = require('../middlewares/user-validator');
+const auth = require('../services/auth')
 
 router.post('/register', validator.registerationValidator(), validator.validateApp, async function(req,res){
     try {
@@ -43,6 +44,52 @@ router.post('/register', validator.registerationValidator(), validator.validateA
                 }
             })
         })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
+    }
+})
+
+router.post('/email/login', async (req,res) => {
+    try {
+        let user = await User.findOne({ email: req.body.email}, '_id password')
+        if(user){
+            let result = auth.comparePassword(req.body.password,user.password)
+            if(result){
+                let userData = {
+                    user_id : user._id
+                }
+                let token = auth.generateJWT(userData)
+                res.status(200).json({ status: true, token: token, message: "Login sucess" })
+            } else{
+                res.status(401).json({ status: false, message: "Invalid Password" })
+            }
+        } else{
+            res.status(404).json({ status: false, message: "No user found" })
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
+    }
+})
+
+router.post('/phone/login', async (req,res) => {
+    try {
+        let user = await User.findOne({ phone: req.body.phone}, '_id password')
+        if(user){
+            let result = auth.comparePassword(req.body.password,user.password)
+            if(result){
+                let userData = {
+                    user_id : user._id
+                }
+                let token = auth.generateJWT(userData)
+                res.status(200).json({ status: true, token: token, message: "Login sucess" })
+            } else{
+                res.status(401).json({ status: false, message: "Invalid Password" })
+            }
+        } else{
+            res.status(404).json({ status: false, message: "No user found" })
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
