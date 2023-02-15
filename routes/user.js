@@ -5,10 +5,10 @@ var router = express.Router();
 
 const User = require('../models/User')
 const { Category }= require('../models/Category')
-const validator = require('../middlewares/user-validator');
-const auth = require('../services/auth')
+const { registerationValidator, loginEmailValidator, loginPhoneValidator, validateApp } = require('../validators/user-validator');
+const auth = require('../middlewares/auth')
 
-router.post('/register', validator.registerationValidator(), validator.validateApp, async function(req,res){
+router.post('/register', registerationValidator(), validateApp, async function(req,res){
     try {
         let result = await Category.find({})
         bcrypt.genSalt(parseInt(process.env.SALT_ROUNDS), function (err, salt) {
@@ -50,7 +50,7 @@ router.post('/register', validator.registerationValidator(), validator.validateA
     }
 })
 
-router.post('/email/login', validator.loginEmailValidator(), validator.validateApp ,async (req,res) => {
+router.post('/email/login', loginEmailValidator(), validateApp ,async (req,res) => {
     try {
         let user = await User.findOne({ email: req.body.email}, '_id password')
         if(user){
@@ -73,7 +73,7 @@ router.post('/email/login', validator.loginEmailValidator(), validator.validateA
     }
 })
 
-router.post('/phone/login', validator.loginPhoneValidator(), validator.validateApp, async (req,res) => {
+router.post('/phone/login', loginPhoneValidator(), validateApp, async (req,res) => {
     try {
         let user = await User.findOne({ phone: req.body.phone}, '_id password')
         if(user){
