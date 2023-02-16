@@ -13,7 +13,6 @@ const addCategoryValidator = () => {
                 // checking category name already exists
                 // User.findOne({ _id : req.user_id, categories: { $elemMatch : { name : req.body.name} },'categories.name')
                 let result = await User.findOne({ _id: req.user_id, "categories.name": req.body.name }, 'categories.name')
-                console.log(result);
                 if(result){
                     return Promise.reject('Category name already exists')
                 }
