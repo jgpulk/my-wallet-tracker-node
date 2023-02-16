@@ -29,6 +29,7 @@ router.post('/add-category', validate, addCategoryValidator(), validateApp, asyn
             icon_id : req.body.icon_id,
             color_id : req.body.color_id
         })
+        // res.send(new_category)
         await User.findByIdAndUpdate(req.user_id, { $push: { categories: new_category } }, { new: true }).exec()
         res.status(200).json({ status: true, message : "New category added - "+ new_category.name})
     } catch (error) {
