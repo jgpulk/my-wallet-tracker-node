@@ -10,6 +10,8 @@ var db = require('./services/db');
 
 // Routing diretories
 var indexRouter = require('./routes/index');
+var colorRouter = require('./routes/color');
+var iconRouter = require('./routes/icon');
 var userRouter = require('./routes/user');
 var categoryRouter = require('./routes/category');
 var adminRouter = require('./routes/admin/admin');
@@ -30,6 +32,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/user/category', categoryRouter);
+
+// Common Routes
+app.use('/color', colorRouter);
+app.use('/icon', iconRouter);
+
+// adminRoutes
 app.use('/mwt/admin', adminRouter);
 
 // catch 404 and forward to error handler

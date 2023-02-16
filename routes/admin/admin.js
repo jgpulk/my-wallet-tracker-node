@@ -8,16 +8,6 @@ const { Category, Item } = require('../../models/Category')
 
 // Colors
 
-router.get('/color/get-all-colors', async (req, res, next) => {
-    try {
-        let colors = await Color.find({})
-        res.status(200).json({ status: true, colors : colors})
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
-    }
-});
-
 router.post('/color/add-color', async (req,res) => {
     try {
         let new_color = new Color({
@@ -33,16 +23,6 @@ router.post('/color/add-color', async (req,res) => {
 })
 
 // Icons
-
-router.get('/icon/get-all-icons', async (req, res, next) => {
-    try {
-        let icons = await Icon.find({})
-        res.status(200).json({ status: true, icons : icons})
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
-    }
-});
 
 router.post('/icon/add-icon', async (req,res) => {
     try {
