@@ -4,6 +4,9 @@ var Schema = mongoose.Schema
 const { CategorySchema }= require('../models/Category')
 
 const UserSchema = new mongoose.Schema({
+    name: {
+        type: String
+    },
     email: {
         type: String,
         required: true

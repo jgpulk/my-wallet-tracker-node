@@ -75,6 +75,30 @@ const loginPhoneValidator = () => {
     ]
 }
 
+const updatePasswordValidator = () => {
+    return [
+        body('current_password')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Enter your current password').bail(),
+        body('new_password')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Enter your new password').bail()
+            .matches('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})').withMessage('Password pattern does not matches'),
+        body('confirm_password')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Enter your confirm password').bail()
+            .custom((value, { req }) => {
+                if (value !== req.body.new_password) {
+                    throw new Error('Password confirmation does not match password');
+                }
+                return true;
+            })
+    ]
+}
+
 const validateApp = (req, res, next) => {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
@@ -88,5 +112,6 @@ module.exports = {
     registerationValidator,
     loginEmailValidator,
     loginPhoneValidator,
+    updatePasswordValidator,
     validateApp
 }
