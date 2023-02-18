@@ -8,6 +8,8 @@ var logger = require('morgan');
 // DB Connection
 var db = require('./services/db');
 
+let Plan = require('./models/Plan');
+
 // Routing diretories
 var indexRouter = require('./routes/index');
 var colorRouter = require('./routes/color');
