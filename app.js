@@ -14,6 +14,7 @@ var colorRouter = require('./routes/color');
 var iconRouter = require('./routes/icon');
 var userRouter = require('./routes/user');
 var categoryRouter = require('./routes/category');
+var walletRouter = require('./routes/wallet');
 var adminRouter = require('./routes/admin/admin');
 
 var app = express();
@@ -32,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/user/category', categoryRouter);
+app.use('/user/wallet', walletRouter);
 
 // Common Routes
 app.use('/color', colorRouter);
