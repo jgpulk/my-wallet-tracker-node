@@ -2,6 +2,7 @@ const { body, validationResult } = require('express-validator')
 
 const mongoose = require("mongoose")
 const Wallet = require('../models/Wallet')
+const Color = require('../models/Color')
 
 const createWalletValidator = () => {
     return [
@@ -31,9 +32,28 @@ const createWalletValidator = () => {
             .not()
             .trim()
             .isEmpty().withMessage('Select a color').bail()
-            .custom(async (value , {req}) => {
-                if(!(mongoose.isObjectIdOrHexString(value))){
-                    return Promise.reject('Invalid color')
+            .isMongoId().withMessage('Invalid color id').bail()
+            .custom(async value => {
+                const color = await Color.findById(value);
+                if (!color) {
+                    return Promise.reject('Color not exists');
+                }
+                return true;
+            })
+    ]
+}
+
+const deleteWalletValidator = () => {
+    return [
+        body('wallet_id')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Enter wallet name').bail()
+            .custom(async (wallet_name, {req}) => {
+                // checking wallet name already exists
+                let result = await Color.findOne({ user_id : req.user_id, name : wallet_name}, '_id')
+                if(result){
+                    return Promise.reject('Wallet name already exists')
                 }
                 return true
             })
