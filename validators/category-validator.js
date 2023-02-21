@@ -1,7 +1,8 @@
 const { body, validationResult } = require('express-validator')
 
-const mongoose = require("mongoose")
 const User = require('../models/User')
+const Icon = require('../models/Icon')
+const { Color } = require('../models/Color')
 
 const addCategoryValidator = () => {
     return [
@@ -22,21 +23,25 @@ const addCategoryValidator = () => {
             .not()
             .trim()
             .isEmpty().withMessage('Select a icon').bail()
+            .isMongoId().withMessage('Invalid icon id').bail()
             .custom(async value => {
-                if(!(mongoose.isObjectIdOrHexString(value))){
-                    return Promise.reject('Invalid icon')
+                let icon = await Icon.findById(value, '_id');
+                if (!icon) {
+                    return Promise.reject('Icon not exists');
                 }
-                return true
+                return true;
             }),
         body('color_id')
             .not()
             .trim()
             .isEmpty().withMessage('Select a color').bail()
-            .custom(async (value , {req}) => {
-                if(!(mongoose.isObjectIdOrHexString(value))){
-                    return Promise.reject('Invalid color')
+            .isMongoId().withMessage('Invalid color id').bail()
+            .custom(async value => {
+                let color = await Color.findById(value, '_id');
+                if (!color) {
+                    return Promise.reject('Color not exists');
                 }
-                return true
+                return true;
             })
     ]
 }
