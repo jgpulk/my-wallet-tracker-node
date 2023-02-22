@@ -1,8 +1,9 @@
-const { body, validationResult } = require('express-validator')
+const { body, param, validationResult } = require('express-validator')
 
 const User = require('../models/User')
 const Icon = require('../models/Icon')
 const { Color } = require('../models/Color')
+const { Category } = require('../models/Category')
 
 const addCategoryValidator = () => {
     return [
@@ -46,6 +47,23 @@ const addCategoryValidator = () => {
     ]
 }
 
+const addSubCategoryValidator = () => {
+    return [
+        param('category_id')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Invalid URL! Category id not found').bail()
+            .isMongoId().withMessage('Invalid category id').bail()
+            .custom(async (value, {req}) => {
+                let category = await User.findOne({ _id: req.user_id, "categories._id": value }, 'categories.name')
+                if (!category) {
+                    return Promise.reject('Category not exists');
+                }
+                return true;    
+            })
+    ]
+}
+
 const validateApp = (req, res, next) => {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
@@ -57,5 +75,6 @@ const validateApp = (req, res, next) => {
 
 module.exports = {
     addCategoryValidator,
+    addSubCategoryValidator,
     validateApp
 }
