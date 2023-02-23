@@ -2,7 +2,7 @@ const { body, validationResult } = require('express-validator')
 
 const mongoose = require("mongoose")
 const Wallet = require('../models/Wallet')
-const Color = require('../models/Color')
+const { Color } = require('../models/Color')
 
 const createWalletValidator = () => {
     return [
