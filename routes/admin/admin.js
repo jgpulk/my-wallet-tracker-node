@@ -3,8 +3,8 @@ var router = express.Router();
 
 /* GET home page. */
 const Icon = require('../../models/Icon')
-const { Color } = require('../../models/Color')
-const { Category, Item } = require('../../models/Category')
+const Color= require('../../models/Color')
+const Category = require('../../models/Category')
 
 // Colors
 

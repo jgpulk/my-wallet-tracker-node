@@ -12,9 +12,4 @@ const ColorSchema = new mongoose.Schema({
 });
 
 ColorSchema.set('timestamps', true);
-Color = mongoose.model('Color', ColorSchema)
-
-module.exports = {
-    ColorSchema,
-    Color
-}
+module.exports = mongoose.model('Category', ColorSchema)

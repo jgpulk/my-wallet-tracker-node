@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { Color } = require('../models/Color')
+const Color = require('../models/Color')
 
 router.get('/get-all-colors', async (req, res) => {
     try {

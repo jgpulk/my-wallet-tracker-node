@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 var router = express.Router();
 
 const User = require('../models/User')
-const { Category }= require('../models/Category')
+const Category = require('../models/Category')
 const { registerationValidator, loginEmailValidator, loginPhoneValidator, updatePasswordValidator, validateApp } = require('../validators/user-validator');
 const auth = require('../middlewares/auth')
 

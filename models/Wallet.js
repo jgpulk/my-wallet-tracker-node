@@ -32,6 +32,5 @@ const WalletSchema = new mongoose.Schema({
     }
 });
 
-WalletSchema.set('timestamps', true);
-
+WalletSchema.set('timestamps', true)
 module.exports = mongoose.model('Wallet', WalletSchema)
