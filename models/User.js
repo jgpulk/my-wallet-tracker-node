@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 var Schema = mongoose.Schema
 
-const { CategorySchema }= require('../models/Category')
-
 const UserSchema = new mongoose.Schema({
     name: {
         type: String
@@ -24,8 +22,7 @@ const UserSchema = new mongoose.Schema({
         ref: 'Plan',
         default: process.env.BASE_PLAN_ID,
         required: true
-    },
-    categories : [ CategorySchema ]
+    }
 });
 
 UserSchema.set('timestamps', true);

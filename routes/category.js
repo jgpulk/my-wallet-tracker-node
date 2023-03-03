@@ -2,22 +2,18 @@ var express = require('express');
 var router = express.Router();
 
 let User = require('../models/User')
-let { Category, Item } = require('../models/Category')
+let { Category } = require('../models/Category')
 let { addCategoryValidator, addSubCategoryValidator, validateApp } = require('../validators/category-validator')
 let { validate } = require('../middlewares/auth')
 
 router.get('/view-categories', validate, async(req, res) => {
     try {
-        let user_id = req.user_id
-        let result = await User.findOne(
-            { _id : user_id },
-            'categories._id categories.name categories.icon_id categories.color_id categories.sub_category'
-        )
-        .populate({ path : 'categories.icon_id', select : 'link' })
-        .populate({ path : 'categories.color_id', select : 'code' })
-        .populate({ path : 'categories.sub_category.icon_id', select : 'link' })
-        .populate({ path : 'categories.sub_category.color_id', select : 'code' })
-        res.status(200).json({ status: true, categories : result.categories })
+        let categories = await Category.find({ user_id : req.user_id},'name sub_category')
+            .populate('icon_id', 'name link')
+            .populate('color_id', 'name code')
+            .populate('sub_category.icon_id', 'name link')
+            .populate('sub_category.color_id', 'name code')
+        res.status(200).json({ status: true, categories : categories })
     } catch (error) {
         console.log(error);
         res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
