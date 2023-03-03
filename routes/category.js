@@ -35,27 +35,27 @@ router.post('/add-category', validate, addCategoryValidator(), validateApp, asyn
     }
 })
 
-router.post('/:category_id/add-new-subcategory', validate, addSubCategoryValidator(), validateApp, async(req,res) => {
-    try {
-        let new_subcategory = new Item({
-            name : req.body.name,
-            icon_id : req.body.icon_id,
-            color_id : req.body.color_id
-        })
-        let result = await User.findOneAndUpdate(
-            { "_id": req.user_id, "categories._id": req.params.category_id },
-            {
-                $push: {
-                    "categories.$.sub_category": new_subcategory
-                }
-            },
-            { new : true}
-        )
-        res.send(result)
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
-    }
-})
+// router.post('/:category_id/add-new-subcategory', validate, addSubCategoryValidator(), validateApp, async(req,res) => {
+//     try {
+//         let new_subcategory = new Item({
+//             name : req.body.name,
+//             icon_id : req.body.icon_id,
+//             color_id : req.body.color_id
+//         })
+//         let result = await User.findOneAndUpdate(
+//             { "_id": req.user_id, "categories._id": req.params.category_id },
+//             {
+//                 $push: {
+//                     "categories.$.sub_category": new_subcategory
+//                 }
+//             },
+//             { new : true}
+//         )
+//         res.send(result)
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
+//     }
+// })
 
 module.exports = router;
