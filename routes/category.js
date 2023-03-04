@@ -8,16 +8,12 @@ let { validate } = require('../middlewares/auth')
 
 router.get('/view-categories', validate, async(req, res) => {
     try {
-        let user_id = req.user_id
-        let result = await User.findOne(
-            { _id : user_id },
-            'categories._id categories.name categories.icon_id categories.color_id categories.sub_category'
-        )
-        .populate({ path : 'categories.icon_id', select : 'link' })
-        .populate({ path : 'categories.color_id', select : 'code' })
-        .populate({ path : 'categories.sub_category.icon_id', select : 'link' })
-        .populate({ path : 'categories.sub_category.color_id', select : 'code' })
-        res.status(200).json({ status: true, categories : result.categories })
+        let categories = await Category.find({ user_id : req.user_id},'name sub_category')
+            .populate('icon_id', 'name link')
+            .populate('color_id', 'name code')
+            .populate('sub_category.icon_id', 'name link')
+            .populate('sub_category.color_id', 'name code')
+        res.status(200).json({ status: true, categories : categories })
     } catch (error) {
         console.log(error);
         res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
@@ -29,9 +25,10 @@ router.post('/add-category', validate, addCategoryValidator(), validateApp, asyn
         let new_category = new Category({
             name : req.body.name,
             icon_id : req.body.icon_id,
-            color_id : req.body.color_id
+            color_id : req.body.color_id,
+            user_id : req.user_id
         })
-        await User.findByIdAndUpdate(req.user_id, { $push: { categories: new_category } }, { new: true }).exec()
+        await new_category.save()
         res.status(200).json({ status: true, message : "New category added - "+ new_category.name})
     } catch (error) {
         console.log(error);
@@ -41,21 +38,21 @@ router.post('/add-category', validate, addCategoryValidator(), validateApp, asyn
 
 router.post('/:category_id/add-new-subcategory', validate, addSubCategoryValidator(), validateApp, async(req,res) => {
     try {
-        let new_subcategory = new Item({
+        let new_subcategory = {
             name : req.body.name,
             icon_id : req.body.icon_id,
             color_id : req.body.color_id
-        })
-        let result = await User.findOneAndUpdate(
-            { "_id": req.user_id, "categories._id": req.params.category_id },
+        }
+        let result = await Category.findOneAndUpdate(
+            { _id : req.params.category_id, user_id: req.user_id },
             {
                 $push: {
-                    "categories.$.sub_category": new_subcategory
+                    "sub_category": new_subcategory
                 }
             },
             { new : true}
         )
-        res.send(result)
+        res.status(200).json({ status: true, message : new_subcategory.name+" added to "+ result.name, category: result})
     } catch (error) {
         console.log(error);
         res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })

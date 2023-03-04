@@ -32,12 +32,31 @@ const CategorySchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Color',
         required: true
+    },
+    user_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
     ,
-    sub_category: {
-        type: [ ItemSchema ]
-        // type: [{ type : Schema.Types.ObjectId, ref: 'Category'}]
-    }
+    sub_category: [
+        {
+            name: {
+                type: String,
+                required: true
+            },
+            icon_id: {
+                type: Schema.Types.ObjectId,
+                ref: 'Icon',
+                required: true
+            },
+            color_id: {
+                type: Schema.Types.ObjectId,
+                ref: 'Color',
+                required: true
+            },
+        } 
+    ]
 });
 
 CategorySchema.set('timestamps', true);

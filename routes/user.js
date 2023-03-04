@@ -29,6 +29,7 @@ router.post('/register', registerationValidator(), validateApp, async function(r
                     new_user.save()
                         .then(
                             result => {
+                                AddDefaultCategories(result._id)
                                 res.status(200).json({ status: true, message: "creating user", new_user: result})
                             }
                         )
@@ -152,5 +153,113 @@ router.post('/update-password', auth.validate, updatePasswordValidator(), valida
         res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
     }
 })
+
+function AddDefaultCategories(user_id){ 
+    let default_categories = [
+        {
+          "name": "Food & Drink",
+          "icon_id": "63e8850696012292e3693061",
+          "color_id": "63e871ab578c1cabe6976284",
+          "user_id": user_id,
+          "sub_category": [
+            {
+              "name": "Bar, cafe",
+              "icon_id": "63e884ce5e6794edba42da63",
+              "color_id": "63e871ab578c1cabe6976284"
+            },
+            {
+              "name": "Restaurant, fast-food",
+              "icon_id": "63e87a2420a1c3d3e132f636",
+              "color_id": "63e871ab578c1cabe6976284"
+            }
+          ]
+        },
+        {
+          "name": "Income",
+          "icon_id": "63e8852396012292e3693064",
+          "color_id": "63e8716c578c1cabe697627d",
+          "user_id": user_id,
+          "sub_category": [
+            {
+              "name": "Wages, invoices",
+              "icon_id": "63e883a63f06a223ee49bd61",
+              "color_id": "63e8716c578c1cabe697627d"
+            },
+            {
+              "name": "Gambling",
+              "icon_id": "63e8847a3f06a223ee49bd69",
+              "color_id": "63e8716c578c1cabe697627d"
+            },
+            {
+              "name": "Refunds",
+              "icon_id": "63e883c03f06a223ee49bd63",
+              "color_id": "63e8716c578c1cabe697627d"
+            }
+          ]
+        },
+        {
+          "name": "Vehicle",
+          "icon_id": "63e8853196012292e3693066",
+          "color_id": "63e8719a578c1cabe6976282",
+          "user_id": user_id,
+          "sub_category": [
+            {
+              "name": "Fuel",
+              "icon_id": "63e879c1d19c4e33c57afd05",
+              "color_id": "63e8719a578c1cabe6976282"
+            },
+            {
+              "name": "Parking",
+              "icon_id": "63e884893f06a223ee49bd6b",
+              "color_id": "63e8719a578c1cabe6976282"
+            },
+            {
+              "name": "Maintenance",
+              "icon_id": "63e884963f06a223ee49bd6d",
+              "color_id": "63e8719a578c1cabe6976282"
+            }
+          ]
+        },
+        {
+          "name": "Transportation",
+          "icon_id": "63e8853196012292e3693066",
+          "color_id": "63e8717e578c1cabe697627f",
+          "user_id": user_id,
+          "sub_category": [
+            {
+              "name": "Business trips",
+              "icon_id": "63ea0d54058f71de6e55a476",
+              "color_id": "63e8717e578c1cabe697627f"
+            },
+            {
+              "name": "Long distance",
+              "icon_id": "63ea0d93058f71de6e55a478",
+              "color_id": "63e8717e578c1cabe697627f"
+            },
+            {
+              "name": "Public transport",
+              "icon_id": "63ea0dcf058f71de6e55a47a",
+              "color_id": "63e8717e578c1cabe697627f"
+            },
+            {
+              "name": "Taxi",
+              "icon_id": "63ea0dea058f71de6e55a47c",
+              "color_id": "63e8717e578c1cabe697627f"
+            }
+          ]
+        }
+    ]
+    Category.insertMany(default_categories)
+    .then(
+        result => {
+            console.log("Default categories added");
+        }
+    )
+    .catch(
+        error => {
+            console.log(error);
+        }
+    )
+}
 
 module.exports = router;
