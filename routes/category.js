@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 let { Category, Item } = require('../models/Category')
-let { addCategoryValidator, addSubCategoryValidator, validateApp } = require('../validators/category-validator')
+let { addCategoryValidator, addSubCategoryValidator, deleteSubCategoryValidator, validateApp } = require('../validators/category-validator')
 let { validate } = require('../middlewares/auth')
 
 router.get('/view-categories', validate, async(req, res) => {
@@ -52,6 +52,16 @@ router.post('/:category_id/add-new-subcategory', validate, addSubCategoryValidat
             { new : true}
         )
         res.status(200).json({ status: true, message : new_subcategory.name+" added to "+ result.name, category: result})
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
+    }
+})
+
+router.delete('/:category_id/delete-subcategory/:subcategory_id', validate, deleteSubCategoryValidator(), validateApp, async (req,res) => {
+    try {
+        await Category.findOneAndUpdate({ _id : req.params.category_id}, { $pull: { sub_category: { _id:  req.params.subcategory_id } } }, { new: false })
+        res.status(200).json({ status: true, message : "deleted"})
     } catch (error) {
         console.log(error);
         res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })

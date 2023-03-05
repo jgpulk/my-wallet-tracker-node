@@ -71,7 +71,7 @@ const addSubCategoryValidator = () => {
                         }
                     )
                     if(isFound){
-                        return Promise.reject('Sub category name already exists');
+                        return Promise.reject('Subcategory name already exists');
                     }
                 } else{
                     return Promise.reject('Category not exists');
@@ -105,6 +105,37 @@ const addSubCategoryValidator = () => {
     ]
 }
 
+const deleteSubCategoryValidator = () => {
+    return [
+        param('category_id')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Invalid URL! Category id not found').bail()
+            .isMongoId().withMessage('Invalid category id').bail()
+            .custom(async (value, {req}) => {
+                // checking category existence
+                let category = await Category.findOne({ _id: value, user_id : req.user_id}, 'name')
+                if(!category){
+                    return Promise.reject('Category not exists');
+                }
+                return true   
+            }),
+        param('subcategory_id')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Invalid URL! subcategory id not found').bail()
+            .isMongoId().withMessage('Invalid sub category id').bail()
+            .custom(async (value, {req}) => {
+                // checking sub category existence
+                let sub_category = await Category.findOne({ _id: req.params.category_id, user_id : req.user_id, sub_category: { $elemMatch : { _id : value} }}, 'sub_category')
+                if(!sub_category){
+                    return Promise.reject('Subcategory not exists');
+                }
+                return true
+            })
+    ]
+}
+
 const validateApp = (req, res, next) => {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
@@ -117,5 +148,6 @@ const validateApp = (req, res, next) => {
 module.exports = {
     addCategoryValidator,
     addSubCategoryValidator,
+    deleteSubCategoryValidator,
     validateApp
 }
