@@ -47,6 +47,24 @@ const addCategoryValidator = () => {
     ]
 }
 
+const deleteCategoryValidator = () => {
+    return [
+        param('category_id')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Invalid URL! Category id not found').bail()
+            .isMongoId().withMessage('Invalid category id').bail()
+            .custom(async (value, {req}) => {
+                // checking category existence
+                let category = await Category.findOne({ _id: value, user_id : req.user_id}, '_id name')
+                if(!category){
+                    return Promise.reject('Category not exists');
+                }
+                return true
+            })
+    ]
+}
+
 const addSubCategoryValidator = () => {
     return [
         body('name')
@@ -147,6 +165,7 @@ const validateApp = (req, res, next) => {
 
 module.exports = {
     addCategoryValidator,
+    deleteCategoryValidator,
     addSubCategoryValidator,
     deleteSubCategoryValidator,
     validateApp
