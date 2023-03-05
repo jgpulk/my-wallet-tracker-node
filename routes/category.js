@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-let User = require('../models/User')
 let { Category, Item } = require('../models/Category')
 let { addCategoryValidator, addSubCategoryValidator, validateApp } = require('../validators/category-validator')
 let { validate } = require('../middlewares/auth')
