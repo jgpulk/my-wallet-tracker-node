@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 let { Category, Item } = require('../models/Category')
-let { addCategoryValidator, deleteCategoryValidator, addSubCategoryValidator, deleteSubCategoryValidator, validateApp } = require('../validators/category-validator')
+let { addCategoryValidator, deleteCategoryValidator, addSubCategoryValidator, deleteSubCategoryValidator, updateCategoryValidator, validateApp } = require('../validators/category-validator')
 let { validate } = require('../middlewares/auth')
 
 router.get('/view-categories', validate, async(req, res) => {
@@ -39,6 +39,24 @@ router.delete('/delete-category/:category_id', validate, deleteCategoryValidator
     try {
         await Category.findOneAndDelete({ user_id: req.user_id, _id : req.params.category_id})
         res.status(200).json({ status: true, message : "Deleted category"})
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
+    }
+})
+
+router.patch('/update-category/:category_id', validate, updateCategoryValidator(), validateApp, async (req,res) => {
+    try {
+        let updateResult = await Category.findOneAndUpdate(
+            { _id: req.params.category_id, $or: [{ name: { $ne: req.body.name } }, { color_id: { $ne: req.body.color_id } }, { icon_id: { $ne: req.body.icon_id } }] },
+            { name: req.body.name, color_id: req.body.color_id, icon_id: req.body.icon_id },
+            { new: true }
+        );
+        if(updateResult){
+            res.status(200).json({ status: true, message: "Category updated"})
+        } else{
+            res.status(204).json({ status: false, message: "No changes detected"})
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })

@@ -47,6 +47,53 @@ const addCategoryValidator = () => {
     ]
 }
 
+const updateCategoryValidator = () => {
+    return [
+        param('category_id')
+        .not()
+        .trim()
+        .isEmpty().withMessage('Invalid URL! Category id not found').bail()
+        .isMongoId().withMessage('Invalid category id').bail()
+        .custom(async (value, {req}) => {
+            // checking category existence
+            let category = await Category.findOne({ _id: value, user_id : req.user_id}, '_id name')
+            if(!category){
+                return Promise.reject('Category not exists');
+            }
+            return true
+        }),
+        body('name')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Enter new category name').bail(),
+        body('icon_id')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Select a icon').bail()
+            .isMongoId().withMessage('Invalid icon id').bail()
+            .custom(async value => {
+                let icon = await Icon.findById(value, '_id');
+                if (!icon) {
+                    return Promise.reject('Icon not exists');
+                }
+                return true;
+            }),
+        body('color_id')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Select a color').bail()
+            .isMongoId().withMessage('Invalid color id').bail()
+            .custom(async value => {
+                let color = await Color.findById(value, '_id');
+                if (!color) {
+                    return Promise.reject('Color not exists');
+                }
+                return true;
+            })
+    ]
+}
+
+
 const deleteCategoryValidator = () => {
     return [
         param('category_id')
@@ -165,6 +212,7 @@ const validateApp = (req, res, next) => {
 
 module.exports = {
     addCategoryValidator,
+    updateCategoryValidator,
     deleteCategoryValidator,
     addSubCategoryValidator,
     deleteSubCategoryValidator,
