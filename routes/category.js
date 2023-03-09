@@ -100,7 +100,7 @@ router.patch('/:category_id/update-subcategory/:subcategory_id', validate, updat
     try {
         let updateResult = await Category.findOneAndUpdate(
             { _id: req.params.category_id, "sub_category._id": req.params.subcategory_id,
-            $or: [{ "sub_category.name": { $ne: req.body.name } }, { "sub_category.icon_id": { $ne: req.body.icon_id } }, { "sub_category.color_id": { $ne: req.body.color_id } },]},
+            $or: [{ "sub_category.name": { $ne: req.body.name } }, { "sub_category.icon_id": { $ne: req.body.icon_id } }, { "sub_category.color_id": { $ne: req.body.color_id } }]},
             { $set: { "sub_category.$.name": req.body.name, "sub_category.$.icon_id": req.body.icon_id, "sub_category.$.color_id": req.body.color_id } },
             { new: true })
         if(updateResult){
