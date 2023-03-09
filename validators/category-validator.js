@@ -50,18 +50,18 @@ const addCategoryValidator = () => {
 const updateCategoryValidator = () => {
     return [
         param('category_id')
-        .not()
-        .trim()
-        .isEmpty().withMessage('Invalid URL! Category id not found').bail()
-        .isMongoId().withMessage('Invalid category id').bail()
-        .custom(async (value, {req}) => {
-            // checking category existence
-            let category = await Category.findOne({ _id: value, user_id : req.user_id}, '_id name')
-            if(!category){
-                return Promise.reject('Category not exists');
-            }
-            return true
-        }),
+            .not()
+            .trim()
+            .isEmpty().withMessage('Invalid URL! Category id not found').bail()
+            .isMongoId().withMessage('Invalid category id').bail()
+            .custom(async (value, {req}) => {
+                // checking category existence
+                let category = await Category.findOne({ _id: value, user_id : req.user_id}, '_id name')
+                if(!category){
+                    return Promise.reject('Category not exists');
+                }
+                return true
+            }),
         body('name')
             .not()
             .trim()
@@ -92,7 +92,6 @@ const updateCategoryValidator = () => {
             })
     ]
 }
-
 
 const deleteCategoryValidator = () => {
     return [
@@ -170,6 +169,65 @@ const addSubCategoryValidator = () => {
     ]
 }
 
+const updateSubCategoryValidator = () => {
+    return [
+        param('category_id')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Invalid URL! Category id not found').bail()
+            .isMongoId().withMessage('Invalid category id').bail()
+            .custom(async (value, {req}) => {
+                // checking category existence
+                let category = await Category.findOne({ _id: value, user_id : req.user_id}, '_id name')
+                if(!category){
+                    return Promise.reject('Category not exists');
+                }
+                return true
+            }),
+        param('subcategory_id')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Invalid URL! subcategory id not found').bail()
+            .isMongoId().withMessage('Invalid sub category id').bail()
+            .custom(async (value, {req}) => {
+                // checking sub category existence
+                let sub_category = await Category.findOne({ _id: req.params.category_id, user_id : req.user_id, sub_category: { $elemMatch : { _id : value} }}, 'sub_category')
+                if(!sub_category){
+                    return Promise.reject('Subcategory not exists');
+                }
+                return true
+            }),
+        body('name')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Enter new category name').bail(),
+        body('icon_id')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Select a icon').bail()
+            .isMongoId().withMessage('Invalid icon id').bail()
+            .custom(async value => {
+                let icon = await Icon.findById(value, '_id');
+                if (!icon) {
+                    return Promise.reject('Icon not exists');
+                }
+                return true;
+            }),
+        body('color_id')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Select a color').bail()
+            .isMongoId().withMessage('Invalid color id').bail()
+            .custom(async value => {
+                let color = await Color.findById(value, '_id');
+                if (!color) {
+                    return Promise.reject('Color not exists');
+                }
+                return true;
+            })
+    ]
+}
+
 const deleteSubCategoryValidator = () => {
     return [
         param('category_id')
@@ -215,6 +273,7 @@ module.exports = {
     updateCategoryValidator,
     deleteCategoryValidator,
     addSubCategoryValidator,
+    updateSubCategoryValidator,
     deleteSubCategoryValidator,
     validateApp
 }
