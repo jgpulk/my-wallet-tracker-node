@@ -97,12 +97,27 @@ router.delete('/:category_id/delete-subcategory/:subcategory_id', validate, dele
 })
 
 router.patch('/:category_id/update-subcategory/:subcategory_id', validate, updateSubCategoryValidator(), validateApp, async (req,res) => {
+    // Need to fix update issue.
     try {
         let updateResult = await Category.findOneAndUpdate(
-            { _id: req.params.category_id, "sub_category._id": req.params.subcategory_id,
-            $or: [{ "sub_category.name": { $ne: req.body.name } }, { "sub_category.icon_id": { $ne: req.body.icon_id } }, { "sub_category.color_id": { $ne: req.body.color_id } }]},
-            { $set: { "sub_category.$.name": req.body.name, "sub_category.$.icon_id": req.body.icon_id, "sub_category.$.color_id": req.body.color_id } },
-            { new: true })
+            {
+                _id: req.params.category_id,
+                "sub_category._id": req.params.subcategory_id,
+                $or: [
+                    { "sub_category.name": { $ne: req.body.name } },
+                    { "sub_category.icon_id": { $ne: req.body.icon_id } },
+                    { "sub_category.color_id": { $ne: req.body.color_id } }
+                ]
+            },
+            {
+                $set: {
+                    "sub_category.$.name": req.body.name,
+                    "sub_category.$.icon_id": req.body.icon_id,
+                    "sub_category.$.color_id": req.body.color_id
+                }
+            },
+            { new: true }
+        )
         if(updateResult){
             res.status(200).json({ status: true, message: "Category updated"})
         } else{
