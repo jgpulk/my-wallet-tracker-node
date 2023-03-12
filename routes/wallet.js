@@ -3,7 +3,7 @@ var router = express.Router();
 
 let Wallet = require('../models/Wallet')
 let { validate } = require('../middlewares/auth')
-let { createWalletValidator, validateApp } = require('../validators/wallet-validator')
+let { createWalletValidator, deleteWalletValidator, validateApp } = require('../validators/wallet-validator')
 
 router.post('/create-wallet', validate, createWalletValidator(), validateApp, async (req,res) => {
     try {
@@ -32,6 +32,16 @@ router.get('/view-wallets', validate, async (req,res) => {
         let wallets = await Wallet.find({ user_id: req.user_id }, 'name balance status')
             .populate('color_id','code')
         res.status(200).json({ status: true, message: "Showing wallets", wallets: wallets})
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
+    }
+})
+
+router.delete('/delete-wallet/:wallet_id', validate, deleteWalletValidator(), validateApp, async (req,res) => {
+    try {
+        await Wallet.findByIdAndDelete(req.params.wallet_id)
+        res.status(200).json({ status: true, message: "Deleted wallet"})
     } catch (error) {
         console.log(error);
         res.status(500).json({ status: false, error: error.message, message: "Something went wrong" })
