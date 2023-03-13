@@ -3,6 +3,7 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+const logger = require('./utils/logger');
 
 // DB Connection
 var db = require('./services/db');
@@ -19,6 +20,7 @@ var walletRouter = require('./routes/wallet');
 var adminRouter = require('./routes/admin/admin');
 
 var app = express();
+logger.warn("Server started!");
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -44,12 +46,14 @@ app.use('/mwt/admin', adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+  logger.error(`404 || ${res.statusMessage} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
   next(createError(404));
 });
 
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
+  logger.error(`500 || ${res.statusMessage} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   // render the error page
