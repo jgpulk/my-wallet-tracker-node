@@ -105,6 +105,24 @@ const updateWalletValidator = () => {
     ]
 }
 
+const viewWalletValidator = () => {
+    return [
+        param('wallet_id')
+            .not()
+            .trim()
+            .isEmpty().withMessage('Select a wallet').bail()
+            .isMongoId().withMessage('Invalid wallet id').bail()
+            .custom(async ( value, {req}) => {
+                // checking wallet exists
+                let wallet = await Wallet.findOne({ user_id: req.user_id, _id: value}, '_id')
+                if(!wallet){
+                    return Promise.reject('Wallet not exists')
+                }
+                return true
+            }),
+    ]
+}
+
 const validateApp = (req, res, next) => {
     const errors = validationResult(req)
     if (errors.isEmpty()) {
@@ -118,5 +136,6 @@ module.exports = {
     createWalletValidator,
     deleteWalletValidator,
     updateWalletValidator,
+    viewWalletValidator,
     validateApp
 }
