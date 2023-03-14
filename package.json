@@ -17,6 +17,8 @@
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.0",
-    "winston": "^3.8.2"
+    "morgan": "^1.10.0",
+    "winston": "^3.8.2",
+    "winston-mongodb": "^5.1.1"
   }
 }

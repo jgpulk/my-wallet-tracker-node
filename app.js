@@ -3,6 +3,7 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var morganlogger = require('morgan');
 
 // DB Connection
 var db = require('./services/db');
@@ -22,12 +23,12 @@ var walletRouter = require('./routes/wallet');
 var adminRouter = require('./routes/admin/admin');
 
 var app = express();
-logger.info("Server started!");
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use(morganlogger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
