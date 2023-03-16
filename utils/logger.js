@@ -8,7 +8,8 @@ module.exports = createLogger({
             db: "mongodb+srv://"+process.env.MONGO_USERNAME+":"+process.env.MONGO_PASSWORD+"@mywallettracker-cluster.crytsby.mongodb.net/"+process.env.MONGO_DB,
             options: {
               useUnifiedTopology: true
-            }
+            },
+            metaKey: 'metadata' //store addintional data
         }),
         new transports.File({ 
             filename: 'logs/server.log',
