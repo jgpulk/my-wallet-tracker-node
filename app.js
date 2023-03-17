@@ -9,7 +9,7 @@ var morganlogger = require('morgan');
 var db = require('./services/db');
 
 // Logging
-const logger = require('./utils/logger');
+const { dbLogger, fileLogger } = require('./utils/logger');
 
 let Plan = require('./models/Plan');
 
@@ -56,10 +56,11 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   // format transport for file logging and databse logging at logger level
-  logger.error(
-    `${err.status || 500}  ${res.statusMessage} - ${req.originalUrl} - ${req.method} - ${req.ip}`,
+  dbLogger.error(
+    `${res.statusMessage}`,
     { metadata: { user_id: req.user_id, status: (err.status)?err.status:500 ,originalUrl: req.originalUrl, method: req.method, ip_address: req.ip } }
   );
+  fileLogger.error(`${err.status || 500}  ${res.statusMessage} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   // render the error page
